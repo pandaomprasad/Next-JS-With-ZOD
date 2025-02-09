@@ -11,20 +11,31 @@ import {
   Keyboard,
   ScrollView,
   Animated,
-  ActivityIndicator
+  ActivityIndicator,
+  Modal,
 } from "react-native";
 import { useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Dimensions } from "react-native";
+
+export const SCREEN_WIDTH = Dimensions.get("window").width;
+export const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 const fields = [
   { key: "1", label: "Top Paper", subTab1: "GSM", subTab2: "PRICE" },
   { key: "2", label: "Fluit", subTab1: "GSM", subTab2: "PRICE" },
   { key: "3", label: "Lower Paper", subTab1: "GSM", subTab2: "PRICE" },
 ];
+const subFields = [
+  { key: "1", label: "FILM" },
+  { key: "2", label: "All Expense" },
+  { key: "3", label: "Profit" },
+];
 
 export default function App() {
   const [focusedInput, setFocusedInput] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const animatedBorder = new Animated.Value(1);
 
   const handleFocus = (inputKey) => {
@@ -49,7 +60,8 @@ export default function App() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-    }, 2000);
+      setModalVisible(true);
+    }, 200);
   };
 
   return (
@@ -60,14 +72,78 @@ export default function App() {
           <ActivityIndicator size="large" color="#fff" />
         </View>
       )}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            {subFields.map((item) => (
+              <View key={item.key}>
+                <Text style={styles.modalTitle}>{item.label}</Text>
+                <Animated.View
+                  style={[
+                    styles.inputContainer,
+                    {
+                      borderColor:
+                        focusedInput === `${item.key}-label`
+                          ? "#3356ec"
+                          : "#D3D3D3",
+                      borderWidth: animatedBorder,
+                    },
+                  ]}
+                >
+                  <TextInput
+                    inputMode="numeric"
+                    style={styles.input}
+                    onFocus={() => handleFocus(`${item.key}-label`)}
+                    onBlur={handleBlur}
+                  />
+                </Animated.View>
+              </View>
+            ))}
+            <TouchableOpacity
+              onPress={() => setModalVisible(false)}
+              style={{
+                marginTop: 5,
+                backgroundColor: "#3356ec",
+                borderRadius: 8,
+              }}
+            >
+              <Text style={styles.closeButton}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       <SafeAreaView style={styles.safeArea}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <KeyboardAwareScrollView contentContainerStyle={styles.scrollView}>
             <View style={styles.inner}>
               <View style={styles.container}>
                 <Text style={styles.title}>Hello, World!</Text>
-                <Text style={{ flex: 1, alignSelf: 'flex-end', fontSize: 24, fontWeight: 'bold' }}>Result</Text>
-                <Text style={{ flex: 1, alignSelf: 'flex-end', fontSize: 32, fontWeight: 'bold', color: '#3356ec' }}>6556156.1544</Text>
+                <Text
+                  style={{
+                    flex: 1,
+                    alignSelf: "flex-end",
+                    fontSize: 24,
+                    fontWeight: "bold",
+                  }}
+                >
+                  Result
+                </Text>
+                <Text
+                  style={{
+                    flex: 1,
+                    alignSelf: "flex-end",
+                    fontSize: 32,
+                    fontWeight: "bold",
+                    color: "#3356ec",
+                  }}
+                >
+                  6556156.1544
+                </Text>
               </View>
 
               {fields.map((item) => (
@@ -118,7 +194,10 @@ export default function App() {
               ))}
 
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={handleCalculate}>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleCalculate}
+                >
                   <Text style={styles.buttonText}>Calculate</Text>
                 </TouchableOpacity>
               </View>
@@ -198,5 +277,28 @@ const styles = StyleSheet.create({
     zIndex: 10,
     width: "100%",
     height: "100%",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    width: SCREEN_WIDTH * 0.8,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  closeButton: {
+    color: "#fff",
+    fontWeight: "bold",
+    textAlign: "center",
+    padding: 10,
   },
 });
