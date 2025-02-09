@@ -6,7 +6,12 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+  ScrollView,
   Animated,
+  ActivityIndicator
 } from "react-native";
 import { useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -19,6 +24,7 @@ const fields = [
 
 export default function App() {
   const [focusedInput, setFocusedInput] = useState(null);
+  const [loading, setLoading] = useState(false);
   const animatedBorder = new Animated.Value(1);
 
   const handleFocus = (inputKey) => {
@@ -39,69 +45,96 @@ export default function App() {
     }).start();
   };
 
+  const handleCalculate = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  };
+
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <KeyboardAwareScrollView contentContainerStyle={styles.scrollView} enableOnAndroid extraScrollHeight={20}>
-        <View style={styles.inner}>
-          <View style={styles.container}>
-            <Text style={styles.title}>Hello, World!</Text>
-            <Text style={{ alignSelf: "flex-end", fontSize: 24, fontWeight: "bold" }}>Result</Text>
-            <Text style={{ alignSelf: "flex-end", fontSize: 32, fontWeight: "bold", color: "#3356ec" }}>6556156.1544</Text>
-          </View>
-
-          {fields.map((item) => (
-            <View style={styles.container} key={item.key}>
-              <Text style={styles.title}>{item.label}</Text>
-              <Text style={styles.subTab}>{item.subTab1}</Text>
-              <Animated.View
-                style={[
-                  styles.inputContainer,
-                  {
-                    borderColor: focusedInput === `${item.key}-subTab1` ? "#3356ec" : "#D3D3D3",
-                    borderWidth: animatedBorder,
-                  },
-                ]}
-              >
-                <TextInput
-                  inputMode="numeric"
-                  style={styles.input}
-                  onFocus={() => handleFocus(`${item.key}-subTab1`)}
-                  onBlur={handleBlur}
-                />
-              </Animated.View>
-
-              <Text style={styles.subTab}>{item.subTab2}</Text>
-              <Animated.View
-                style={[
-                  styles.inputContainer,
-                  {
-                    borderColor: focusedInput === `${item.key}-subTab2` ? "#3356ec" : "#D3D3D3",
-                    borderWidth: animatedBorder,
-                  },
-                ]}
-              >
-                <TextInput
-                  inputMode="numeric"
-                  style={styles.input}
-                  onFocus={() => handleFocus(`${item.key}-subTab2`)}
-                  onBlur={handleBlur}
-                />
-              </Animated.View>
-            </View>
-          ))}
-
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Calculate</Text>
-            </TouchableOpacity>
-          </View>
+    <View style={styles.rootContainer}>
+      <StatusBar hidden={true} />
+      {loading && (
+        <View style={styles.overlay}>
+          <ActivityIndicator size="large" color="#fff" />
         </View>
-      </KeyboardAwareScrollView>
-    </SafeAreaView>
+      )}
+      <SafeAreaView style={styles.safeArea}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <KeyboardAwareScrollView contentContainerStyle={styles.scrollView}>
+            <View style={styles.inner}>
+              <View style={styles.container}>
+                <Text style={styles.title}>Hello, World!</Text>
+                <Text style={{ flex: 1, alignSelf: 'flex-end', fontSize: 24, fontWeight: 'bold' }}>Result</Text>
+                <Text style={{ flex: 1, alignSelf: 'flex-end', fontSize: 32, fontWeight: 'bold', color: '#3356ec' }}>6556156.1544</Text>
+              </View>
+
+              {fields.map((item) => (
+                <View style={styles.container} key={item.key}>
+                  <Text style={styles.title}>{item.label}</Text>
+                  <Text style={styles.subTab}>{item.subTab1}</Text>
+                  <Animated.View
+                    style={[
+                      styles.inputContainer,
+                      {
+                        borderColor:
+                          focusedInput === `${item.key}-subTab1`
+                            ? "#3356ec"
+                            : "#D3D3D3",
+                        borderWidth: animatedBorder,
+                      },
+                    ]}
+                  >
+                    <TextInput
+                      inputMode="numeric"
+                      style={styles.input}
+                      onFocus={() => handleFocus(`${item.key}-subTab1`)}
+                      onBlur={handleBlur}
+                    />
+                  </Animated.View>
+
+                  <Text style={styles.subTab}>{item.subTab2}</Text>
+                  <Animated.View
+                    style={[
+                      styles.inputContainer,
+                      {
+                        borderColor:
+                          focusedInput === `${item.key}-subTab2`
+                            ? "#3356ec"
+                            : "#D3D3D3",
+                        borderWidth: animatedBorder,
+                      },
+                    ]}
+                  >
+                    <TextInput
+                      inputMode="numeric"
+                      style={styles.input}
+                      onFocus={() => handleFocus(`${item.key}-subTab2`)}
+                      onBlur={handleBlur}
+                    />
+                  </Animated.View>
+                </View>
+              ))}
+
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.button} onPress={handleCalculate}>
+                  <Text style={styles.buttonText}>Calculate</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </KeyboardAwareScrollView>
+        </TouchableWithoutFeedback>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  rootContainer: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
   safeArea: {
     flex: 1,
   },
@@ -152,5 +185,18 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 22,
     fontWeight: "bold",
+  },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
+    width: "100%",
+    height: "100%",
   },
 });
