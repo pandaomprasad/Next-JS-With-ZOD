@@ -17,6 +17,7 @@ import {
 import { useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Dimensions } from "react-native";
+import { BlurView } from "expo-blur";
 
 export const SCREEN_WIDTH = Dimensions.get("window").width;
 export const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -78,7 +79,7 @@ export default function App() {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
+        <BlurView intensity={50} tint="dark" style={styles.modalContainer}>
           <View style={styles.modalContent}>
             {subFields.map((item) => (
               <View key={item.key}>
@@ -105,7 +106,13 @@ export default function App() {
               </View>
             ))}
             <TouchableOpacity
-              onPress={() => setModalVisible(false)}
+              onPress={() => {
+                setModalVisible(false);
+                setLoading(true);
+                setTimeout(() => {
+                  setLoading(false);  // Hide loading after a short delay
+                }, 3000);
+              }}
               style={{
                 marginTop: 5,
                 backgroundColor: "#3356ec",
@@ -115,7 +122,7 @@ export default function App() {
               <Text style={styles.closeButton}>Submit</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </BlurView>
       </Modal>
       <SafeAreaView style={styles.safeArea}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
