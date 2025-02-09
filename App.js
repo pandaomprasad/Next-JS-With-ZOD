@@ -6,12 +6,10 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
-  ScrollView,
+  Animated,
 } from "react-native";
 import { useState } from "react";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const fields = [
   { key: "1", label: "Top Paper", subTab1: "GSM", subTab2: "PRICE" },
@@ -21,51 +19,84 @@ const fields = [
 
 export default function App() {
   const [focusedInput, setFocusedInput] = useState(null);
+  const animatedBorder = new Animated.Value(1);
+
+  const handleFocus = (inputKey) => {
+    setFocusedInput(inputKey);
+    Animated.timing(animatedBorder, {
+      toValue: 2,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const handleBlur = () => {
+    setFocusedInput(null);
+    Animated.timing(animatedBorder, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          <View style={styles.inner}>
-            <View style={styles.container}>
-              <Text style={styles.title}>Hello, World!</Text>
-              <Text>Result</Text>
-            </View>
-
-            {fields.map((item) => (
-              <View style={styles.container} key={item.key}>
-                <Text style={styles.title}>{item.label}</Text>
-                <Text style={styles.subTab}>{item.subTab1}</Text>
-                <TextInput
-                  inputMode="numeric"
-                  style={[
-                    styles.input,
-                    focusedInput === `${item.key}-subTab1` && styles.inputFocused,
-                  ]}
-                  onFocus={() => setFocusedInput(`${item.key}-subTab1`)}
-                  onBlur={() => setFocusedInput(null)}
-                />
-                <Text style={styles.subTab}>{item.subTab2}</Text>
-                <TextInput
-                  inputMode="numeric"
-                  style={[
-                    styles.input,
-                    focusedInput === `${item.key}-subTab2` && styles.inputFocused,
-                  ]}
-                  onFocus={() => setFocusedInput(`${item.key}-subTab2`)}
-                  onBlur={() => setFocusedInput(null)}
-                />
-              </View>
-            ))}
-
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Calculate</Text>
-              </TouchableOpacity>
-            </View>
+      <KeyboardAwareScrollView contentContainerStyle={styles.scrollView} enableOnAndroid extraScrollHeight={20}>
+        <View style={styles.inner}>
+          <View style={styles.container}>
+            <Text style={styles.title}>Hello, World!</Text>
+            <Text style={{ alignSelf: "flex-end", fontSize: 24, fontWeight: "bold" }}>Result</Text>
+            <Text style={{ alignSelf: "flex-end", fontSize: 32, fontWeight: "bold", color: "#3356ec" }}>6556156.1544</Text>
           </View>
-        </ScrollView>
-      </TouchableWithoutFeedback>
+
+          {fields.map((item) => (
+            <View style={styles.container} key={item.key}>
+              <Text style={styles.title}>{item.label}</Text>
+              <Text style={styles.subTab}>{item.subTab1}</Text>
+              <Animated.View
+                style={[
+                  styles.inputContainer,
+                  {
+                    borderColor: focusedInput === `${item.key}-subTab1` ? "#3356ec" : "#D3D3D3",
+                    borderWidth: animatedBorder,
+                  },
+                ]}
+              >
+                <TextInput
+                  inputMode="numeric"
+                  style={styles.input}
+                  onFocus={() => handleFocus(`${item.key}-subTab1`)}
+                  onBlur={handleBlur}
+                />
+              </Animated.View>
+
+              <Text style={styles.subTab}>{item.subTab2}</Text>
+              <Animated.View
+                style={[
+                  styles.inputContainer,
+                  {
+                    borderColor: focusedInput === `${item.key}-subTab2` ? "#3356ec" : "#D3D3D3",
+                    borderWidth: animatedBorder,
+                  },
+                ]}
+              >
+                <TextInput
+                  inputMode="numeric"
+                  style={styles.input}
+                  onFocus={() => handleFocus(`${item.key}-subTab2`)}
+                  onBlur={handleBlur}
+                />
+              </Animated.View>
+            </View>
+          ))}
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText}>Calculate</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -95,16 +126,15 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 3,
   },
+  inputContainer: {
+    borderRadius: 8,
+    overflow: "hidden",
+  },
   input: {
     height: 40,
-    borderColor: "#D3D3D3",
-    borderWidth: 1,
     padding: 10,
     borderRadius: 8,
-  },
-  inputFocused: {
-    borderColor: "#3356ec", // Change to blue when focused
-    borderWidth: 2,
+    backgroundColor: "#fff",
   },
   buttonContainer: {
     marginTop: 20,
@@ -124,4 +154,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
