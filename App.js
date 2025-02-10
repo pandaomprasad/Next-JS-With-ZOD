@@ -22,16 +22,6 @@ import { BlurView } from "expo-blur";
 export const SCREEN_WIDTH = Dimensions.get("window").width;
 export const SCREEN_HEIGHT = Dimensions.get("window").height;
 
-const fields = [
-  { key: "1", label: "Top Paper", subTab1: "GSM", subTab2: "PRICE" },
-  { key: "2", label: "Fluit", subTab1: "GSM", subTab2: "PRICE" },
-  { key: "3", label: "Lower Paper", subTab1: "GSM", subTab2: "PRICE" },
-];
-const subFields = [
-  { key: "1", label: "FILM" },
-  { key: "2", label: "All Expense" },
-  { key: "3", label: "Profit" },
-];
 
 export default function App() {
   const [focusedInput, setFocusedInput] = useState(null);
@@ -81,36 +71,78 @@ export default function App() {
       >
         <BlurView intensity={50} tint="dark" style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            {subFields.map((item) => (
-              <View key={item.key}>
-                <Text style={styles.modalTitle}>{item.label}</Text>
-                <Animated.View
-                  style={[
-                    styles.inputContainer,
-                    {
-                      borderColor:
-                        focusedInput === `${item.key}-label`
-                          ? "#3356ec"
-                          : "#D3D3D3",
-                      borderWidth: animatedBorder,
-                    },
-                  ]}
-                >
-                  <TextInput
-                    inputMode="numeric"
-                    style={styles.input}
-                    onFocus={() => handleFocus(`${item.key}-label`)}
-                    onBlur={handleBlur}
-                  />
-                </Animated.View>
-              </View>
-            ))}
+            <View>
+              <Text style={styles.modalTitle}>FILM</Text>
+              <Animated.View
+                style={[
+                  styles.inputContainer,
+                  {
+                    borderColor:
+                      focusedInput === "subField-film"
+                        ? "#3356ec"
+                        : "#D3D3D3",
+                    borderWidth: animatedBorder,
+                  },
+                ]}
+              >
+                <TextInput
+                  inputMode="numeric"
+                  style={styles.input}
+                  onFocus={() => handleFocus("subField-film")}
+                  onBlur={handleBlur}
+                />
+              </Animated.View>
+            </View>
+            <View>
+              <Text style={styles.modalTitle}>All Expense</Text>
+              <Animated.View
+                style={[
+                  styles.inputContainer,
+                  {
+                    borderColor:
+                      focusedInput === "subField-expense"
+                        ? "#3356ec"
+                        : "#D3D3D3",
+                    borderWidth: animatedBorder,
+                  },
+                ]}
+              >
+                <TextInput
+                  inputMode="numeric"
+                  style={styles.input}
+                  onFocus={() => handleFocus("subField-expense")}
+                  onBlur={handleBlur}
+                />
+              </Animated.View>
+            </View>
+            <View>
+              <Text style={styles.modalTitle}>Profit</Text>
+              <Animated.View
+                style={[
+                  styles.inputContainer,
+                  {
+                    borderColor:
+                      focusedInput === "subField-profit"
+                        ? "#3356ec"
+                        : "#D3D3D3",
+                    borderWidth: animatedBorder,
+                  },
+                ]}
+              >
+                <TextInput
+                  inputMode="numeric"
+                  style={styles.input}
+                  onFocus={() => handleFocus("subField-profit")}
+                  onBlur={handleBlur}
+                />
+              </Animated.View>
+            </View>
             <TouchableOpacity
               onPress={() => {
                 setModalVisible(false);
                 setLoading(true);
                 setTimeout(() => {
-                  setLoading(false);  // Hide loading after a short delay
+                  setLoading(false); // Hide loading after a short delay
                 }, 3000);
               }}
               style={{
@@ -129,76 +161,228 @@ export default function App() {
           <KeyboardAwareScrollView contentContainerStyle={styles.scrollView}>
             <View style={styles.inner}>
               <View style={styles.container}>
-                <Text style={styles.title}>Hello, World!</Text>
-                <Text
-                  style={{
-                    flex: 1,
-                    alignSelf: "flex-end",
-                    fontSize: 24,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Result
-                </Text>
-                <Text
-                  style={{
-                    flex: 1,
-                    alignSelf: "flex-end",
-                    fontSize: 32,
-                    fontWeight: "bold",
-                    color: "#3356ec",
-                  }}
-                >
-                  6556156.1544
-                </Text>
+                <Text style={[styles.title,{fontSize:28,fontWeight:'900',marginVertical:SCREEN_HEIGHT*0.0125}]}>CALCULATOR</Text>
+
+                <View style={{ flexDirection: "row", width: "100%" }}>
+                  <View style={{ width: "50%", flexDirection: "column" }}>
+                    <Text
+                      style={{
+                        flex: 1,
+                        alignSelf: "flex-start",
+                        fontSize: 18,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Total Weight
+                    </Text>
+                    <Text
+                      style={{
+                        flex: 1,
+                        alignSelf: "flex-start",
+                        fontSize: 24,
+                        fontWeight: "bold",
+                        color: "#3356ec",
+                      }}
+                    >
+                      62
+                    </Text>
+                  </View>
+                  <View style={{ width: "50%", flexDirection: "column" }}>
+                    <Text
+                      style={{
+                        flex: 1,
+                        alignSelf: "flex-end",
+                        fontSize: 18,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Toatl Rate{" "}
+                    </Text>
+                    <Text
+                      style={{
+                        flex: 1,
+                        alignSelf: "flex-end",
+                        fontSize: 24,
+                        fontWeight: "bold",
+                        color: "#3356ec",
+                      }}
+                    >
+                      6556156.1544
+                    </Text>
+                  </View>
+                </View>
               </View>
 
-              {fields.map((item) => (
-                <View style={styles.container} key={item.key}>
-                  <Text style={styles.title}>{item.label}</Text>
-                  <Text style={styles.subTab}>{item.subTab1}</Text>
-                  <Animated.View
-                    style={[
-                      styles.inputContainer,
-                      {
-                        borderColor:
-                          focusedInput === `${item.key}-subTab1`
-                            ? "#3356ec"
-                            : "#D3D3D3",
-                        borderWidth: animatedBorder,
-                      },
-                    ]}
-                  >
-                    <TextInput
-                      inputMode="numeric"
-                      style={styles.input}
-                      onFocus={() => handleFocus(`${item.key}-subTab1`)}
-                      onBlur={handleBlur}
-                    />
-                  </Animated.View>
+              <View style={styles.container}>
+                <Text style={styles.title}>Top Paper</Text>
+                <View style={{ flexDirection: "row", width: "100%", gap: 5 }}>
+                  <View style={{ flexDirection: "column", width: "50%" }}>
+                    <Text style={styles.subTab}>GSM</Text>
+                    <Animated.View
+                      style={[
+                        styles.inputContainer,
+                        {
+                          borderColor:
+                            focusedInput === "topPaper-gsm"
+                              ? "#3356ec"
+                              : "#D3D3D3",
+                          borderWidth: animatedBorder,
+                        },
+                      ]}
+                    >
+                      <TextInput
+                        inputMode="numeric"
+                        style={styles.input}
+                        onFocus={() => handleFocus("topPaper-gsm")}
+                        onBlur={handleBlur}
+                      />
+                    </Animated.View>
+                  </View>
 
-                  <Text style={styles.subTab}>{item.subTab2}</Text>
-                  <Animated.View
-                    style={[
-                      styles.inputContainer,
-                      {
-                        borderColor:
-                          focusedInput === `${item.key}-subTab2`
-                            ? "#3356ec"
-                            : "#D3D3D3",
-                        borderWidth: animatedBorder,
-                      },
-                    ]}
-                  >
-                    <TextInput
-                      inputMode="numeric"
-                      style={styles.input}
-                      onFocus={() => handleFocus(`${item.key}-subTab2`)}
-                      onBlur={handleBlur}
-                    />
-                  </Animated.View>
+                  <View style={{ flexDirection: "column", width: "50%" }}>
+                    <Text style={styles.subTab}>Rate</Text>
+                    <Animated.View
+                      style={[
+                        styles.inputContainer,
+                        {
+                          borderColor:
+                            focusedInput === "topPaper-rate"
+                              ? "#3356ec"
+                              : "#D3D3D3",
+                          borderWidth: animatedBorder,
+                        },
+                      ]}
+                    >
+                      <TextInput
+                        inputMode="numeric"
+                        style={styles.input}
+                        onFocus={() => handleFocus("topPaper-rate")}
+                        onBlur={handleBlur}
+                      />
+                    </Animated.View>
+                  </View>
                 </View>
-              ))}
+              </View>
+              <View style={styles.container}>
+                <Text style={styles.title}>Fluit</Text>
+                <View style={{ flexDirection: "row", width: "100%", gap: 5 }}>
+                  <View style={{ flexDirection: "column", width: "33%" }}>
+                    <Text style={styles.subTab}>GSM</Text>
+                    <Animated.View
+                      style={[
+                        styles.inputContainer,
+                        {
+                          borderColor:
+                            focusedInput === "fliut-gsm"
+                              ? "#3356ec"
+                              : "#D3D3D3",
+                          borderWidth: animatedBorder,
+                        },
+                      ]}
+                    >
+                      <TextInput
+                        inputMode="numeric"
+                        style={styles.input}
+                        onFocus={() => handleFocus("fliut-gsm")}
+                        onBlur={handleBlur}
+                      />
+                    </Animated.View>
+                  </View>
+                  <View style={{ flexDirection: "column", width: "33%" }}>
+                    <Text style={styles.subTab}>Rate</Text>
+                    <Animated.View
+                      style={[
+                        styles.inputContainer,
+                        {
+                          borderColor:
+                            focusedInput === "fliut-rate"
+                              ? "#3356ec"
+                              : "#D3D3D3",
+                          borderWidth: animatedBorder,
+                        },
+                      ]}
+                    >
+                      <TextInput
+                        inputMode="numeric"
+                        style={styles.input}
+                        onFocus={() => handleFocus("fliut-rate")}
+                        onBlur={handleBlur}
+                      />
+                    </Animated.View>
+                  </View>
+                  <View style={{ flexDirection: "column", width: "33%" }}>
+                    <Text style={styles.subTab}>Fluit %</Text>
+                    <Animated.View
+                      style={[
+                        styles.inputContainer,
+                        {
+                          borderColor:
+                            focusedInput === "fliut-percenteage"
+                              ? "#3356ec"
+                              : "#D3D3D3",
+                          borderWidth: animatedBorder,
+                        },
+                      ]}
+                    >
+                      <TextInput
+                        inputMode="numeric"
+                        style={styles.input}
+                        onFocus={() => handleFocus("fliut-percenteage")}
+                        onBlur={handleBlur}
+                      />
+                    </Animated.View>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.container}>
+                <Text style={styles.title}>Lower Paper</Text>
+                <View style={{ flexDirection: "row", width: "100%", gap: 5 }}>
+                  <View style={{ flexDirection: "column", width: "50%" }}>
+                    <Text style={styles.subTab}>GSM</Text>
+                    <Animated.View
+                      style={[
+                        styles.inputContainer,
+                        {
+                          borderColor:
+                            focusedInput === "lowerPaper-gsm"
+                              ? "#3356ec"
+                              : "#D3D3D3",
+                          borderWidth: animatedBorder,
+                        },
+                      ]}
+                    >
+                      <TextInput
+                        inputMode="numeric"
+                        style={styles.input}
+                        onFocus={() => handleFocus("lowerPaper-gsm")}
+                        onBlur={handleBlur}
+                      />
+                    </Animated.View>
+                  </View>
+                  <View style={{ flexDirection: "column", width: "50%" }}>
+                    <Text style={styles.subTab}>Rate</Text>
+                    <Animated.View
+                      style={[
+                        styles.inputContainer,
+                        {
+                          borderColor:
+                            focusedInput === "lowerPaper-rate"
+                              ? "#3356ec"
+                              : "#D3D3D3",
+                          borderWidth: animatedBorder,
+                        },
+                      ]}
+                    >
+                      <TextInput
+                        inputMode="numeric"
+                        style={styles.input}
+                        onFocus={() => handleFocus("lowerPaper-rate")}
+                        onBlur={handleBlur}
+                      />
+                    </Animated.View>
+                  </View>
+                </View>
+              </View>
 
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
@@ -234,12 +418,12 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "bold",
     color: "#3356ec",
   },
   subTab: {
-    fontSize: 14,
+    fontSize: 10,
     color: "#98999e",
     fontWeight: "700",
     marginTop: 5,
